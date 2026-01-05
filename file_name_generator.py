@@ -1,5 +1,6 @@
 import datetime
 import os
+from pathlib import Path
 
 path = input(r'')
 file0 = 0
@@ -12,13 +13,10 @@ for file_ in list_:
     # This if statement is an AppleDouble Format
     #       This format is to prevent loss of a file's metadata when it is moved
     #       from the macOS system to other file systems
-    if file1[0:2] == "._":
+    if file1[0:2] == "._" or file1[0] == ".":
         print(f"iOS file: {file1}")
         continue
     # This excludes files related to the Apple Desktop Services Store.
-    elif file1[0] == ".":
-        print(f"iOS file: {file1}")
-        continue
     else:
         file0 += 1
 
