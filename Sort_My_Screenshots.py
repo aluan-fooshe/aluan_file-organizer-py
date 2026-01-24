@@ -25,11 +25,12 @@ if __name__ == "__main__":
     ws.title = f"Screenshots {formatted}"
 
     """List everything that is in the Screenshots directory"""
-    screenshots_folder = r"C:\Users\Audrey\OneDrive\Pictures\screenshot-collages"
+    screenshots_folder = r"C:\Users\Audrey\OneDrive\Pictures\random_images"
+    directory, filename = os.path.split(screenshots_folder)
     print(f"\nFiles in the directory: {screenshots_folder}\n")
     all_screenshots = os.listdir(screenshots_folder)
     all_screenshots = [f for f in all_screenshots if os.path.isfile(screenshots_folder+'/'+f)]
     print(*all_screenshots, sep="\n")
 
     print("\n", screenshots_wb.sheetnames)
-    screenshots_wb.save('Screenshots.xlsx')
+    screenshots_wb.save(f'Screenshots_{filename}.xlsx')
