@@ -11,26 +11,90 @@
 import datetime
 import sys
 from openpyxl import Workbook
+from Filelist_workbook import Excel_Filelist
 import os
+
+def add_to_spreadsheet(dictionary, letter1, letter2):
+    return_str = ""
+    i = 3
+    for key, value in dictionary.items():
+        name_cell1 = f"{letter1}{i}"
+        name_cell2 = f"{letter2}{i}"
+        ws[name_cell1] = f"{key}"
+        ws[name_cell2] = f"{value}"
+        return_str = return_str + f"{name_cell1}\t{key}\t\t\t{name_cell2}\t{value}\n"
+        i += 1
+    return return_str
 
 if __name__ == "__main__":
     print(sys.executable)
     print(sys.path)
 
-    now = datetime.datetime.now()
-    formatted = now.strftime("%Y-%m-%d_%H%M%S")
+    dt = datetime.datetime.today()
+    date = dt.strftime("%Y %B %d @%I:%M%p")
 
-    screenshots_wb = Workbook()
-    ws = screenshots_wb.active
-    ws.title = f"Screenshots {formatted}"
+    dir_path = r"C:\Users\Audrey\OneDrive\Pictures\Collages and Screenshots 2017-2018"
 
-    """List everything that is in the Screenshots directory"""
-    screenshots_folder = r"C:\Users\Audrey\OneDrive\Pictures\random_images"
-    directory, filename = os.path.split(screenshots_folder)
-    print(f"\nFiles in the directory: {screenshots_folder}\n")
-    all_screenshots = os.listdir(screenshots_folder)
-    all_screenshots = [f for f in all_screenshots if os.path.isfile(screenshots_folder+'/'+f)]
-    print(*all_screenshots, sep="\n")
+    # logic for automatically naming the screenshots file list to directory name.
+    last_part = os.path.basename(dir_path)
+    xlsx_name = last_part.replace(" ", "-")
 
-    print("\n", screenshots_wb.sheetnames)
-    screenshots_wb.save(f'Screenshots_{filename}.xlsx')
+    # Load existing file
+    filelist_wb = Workbook()
+    ws = filelist_wb.active
+    ws.title = "List of Files"
+
+    ws['B1'] = "Filelist of folder"
+    ws['C1'] = date
+    print(date)
+    # "2025-07-16 11:04AM"
+    ws['A2'] = "Image"
+    ws['B2'] = "Name"
+    ws['C2'] = "LastWriteTime"
+
+    # Pass the worksheet object
+    excel_fl = Excel_Filelist(worksheet=ws, dir_path=dir_path)
+
+    width = 10
+    excel_fl.set_column_width_pixels('A', width)
+    excel_fl.set_column_width_pixels('B', width * 2)
+    excel_fl.set_column_width_pixels('C', width * 1.5)
+
+    i = 3
+    excel_fl.import_dictionary()
+    excel_fl.print_dictionary()
+    imgname1, timestamp2 = next(iter(excel_fl.dictionary.items()))
+
+    name_cell = f"B{i}"
+    lastwritetime_cell = f"C{i}"
+
+    ws[name_cell] = f"{imgname1}"
+    ws[lastwritetime_cell] = f"{timestamp2}"
+
+    print("--------------------\n")
+
+    # image_dir = sys.argv[1]
+    saved_image_dir = r"C:\Users\Audrey\OneDrive\Pictures\screenshot-resized100"
+
+    # i is the counter for number of dictionary items. The (image1, timestamp1) unpacks the dictionary items.
+    try:
+        for i, (image1, timestamp1) in enumerate(excel_fl.dictionary.items()):
+            """
+            uncomment this block of code if you want to debug or update the code, and only test with the first 10 images.
+            """
+            # if i >= 10:
+            #     break
+            """
+            the os path join function is implemented so that every image listed in the dictionary automatically forms each filepath to each individual image
+            in order to embed each thumbnail image into each row of the spreadsheet.
+            """
+            returned_path = excel_fl.filelist_thumbnail(idx=i, image=image1, image_dir=dir_path,
+                                                        saved_image_dir=saved_image_dir)
+            print(returned_path)
+
+            add_to_spreadsheet(excel_fl.dictionary, "B", "C")
+
+            filelist_wb.save(f'{xlsx_name}_filelist.xlsx')
+        print(f"\n{ws.title} spreadsheet is saved!")
+    except:
+        print("dictionary is empty!")
