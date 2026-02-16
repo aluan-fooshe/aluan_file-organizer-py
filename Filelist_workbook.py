@@ -56,9 +56,13 @@ class Excel_Filelist:
 
     def import_dictionary(self):
         try:
-            all_screenshots = os.listdir(self.dir_path)
-            filekey = [f for f in all_screenshots if os.path.isfile(self.dir_path + '/' + f)]
-            timestamps = [self.get_file_creation_date(t) for t in all_screenshots]
+            all_files = os.listdir(self.dir_path)
+            filekey = [f for f in all_files if os.path.isfile(self.dir_path + '/' + f)]
+
+            for f in filekey:  # [:] creates a copy to iterate over
+                if f.endswith('.xlsx'):
+                    filekey.remove(f)
+            timestamps = [self.get_file_creation_date(t) for t in all_files]
             unsorted_dict = dict(zip(filekey, timestamps))
             # sort by value (ascending). value is timestamps
             self.dictionary = dict(sorted(unsorted_dict.items(), key=lambda item: item[1]))
