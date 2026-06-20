@@ -44,7 +44,7 @@ if __name__ == "__main__":
     dt = datetime.datetime.today()
     date = dt.strftime("%Y %B %d @%I:%M%p")
 
-    dir_path = r"C:\Users\Audrey\OneDrive\Desktop\Audrey_photos_bkup\2023-11\VID_20231101_Halloween in Santa Cruz pt2"
+    dir_path = r"C:\Users\Audrey\OneDrive\Desktop\Audrey_photos_bkup\2023-10\VID_20231031_ Halloween in Santa Cruz"
 
     # logic for automatically naming the screenshots file list to directory name.
     last_part = os.path.basename(dir_path)
@@ -73,19 +73,18 @@ if __name__ == "__main__":
     excel_fl.set_column_width_pixels('A', width)
     excel_fl.set_column_width_pixels('B', width * 2)
 
-    # Added column for renaming all video files
+    # # Added column for renaming all video files
     excel_fl.set_column_width_pixels('C', C_width / 2)
-
-    excel_fl.set_column_width_pixels('D', width * 1.5)
+    # excel_fl.set_column_width_pixels('D', width * 1.5)
 
     i = 3
     excel_fl.import_dictionary()
-    # excel_fl.print_dictionary()
     imgname1, timestamp2 = next(iter(excel_fl.dictionary.items()))
 
     name_cell = f"B{i}"
-    new_name_cell = f"C{i}"
-    lastwritetime_cell = f"D{i}"
+    # new_name_cell = f"C{i}"
+    # lastwritetime_cell = f"D{i}"
+    lastwritetime_cell = f"C{i}"
 
     ws[name_cell] = f"{imgname1}"
     ws[lastwritetime_cell] = f"{timestamp2}"
@@ -125,8 +124,9 @@ if __name__ == "__main__":
                                                         saved_image_dir=saved_image_dir)
             # print(returned_path)
 
-            add_dict_to_spreadsheet(excel_fl.dictionary, "B", "D")
-            add_value_to_spreadsheet(new_names, "C")
+            add_dict_to_spreadsheet(excel_fl.dictionary, "B", "C")
+            # add_dict_to_spreadsheet(excel_fl.dictionary, "B", "D")
+            # add_value_to_spreadsheet(new_names, "C")
 
             filelist_wb.save(fr'{dir_path}\{xlsx_name}_filelist.xlsx')
         print(f"\n{ws.title} spreadsheet is saved!")

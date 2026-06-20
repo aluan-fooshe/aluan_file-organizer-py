@@ -13,7 +13,7 @@ foreach ($char in $jsonNameEnding.ToCharArray()) {
 $brokenfilename
 
 for ($year = 2021; $year -le 2025; $year++){
-    $folderPath = "C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250808T041526Z-1-001\Photos from $year"
+    $folderPath = "C:\Users\Audrey\OneDrive\Desktop\Audrey_photos_bkup\Takeout\Photos from $year"
 
         foreach ($name in $brokenfilename){
         # Write-Host "[$name]"
