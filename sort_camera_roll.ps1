@@ -1,8 +1,8 @@
 ﻿# Set the folder path (current folder in this example)
-$folderPath = "C:\Users\Audrey\Desktop-LUAN_LGGRAM-2024\takeout-20250808T041526Z-1-001\Photos from 2022"
+$folderPath = "C:\Users\Audrey\OneDrive\Desktop\extractNdelete"
 
 # Define output txt file path
-$outputFile = "$folderPath\README.md"
+$outputMd = "$folderPath\README.md"
 
 # --------------------------------------------
 # Get all non-JSON files in the folder
@@ -13,7 +13,7 @@ $matchedFiles = 0
 
 # Write title and directory path to README
 "# README" | Out-File $outputMd # erases everything in README without command "-Append"
-"## Files in $directoryPath`n" | Out-File $outputMd -Append
+"## Files in $folderPath`n" | Out-File $outputMd -Append
 "**Last Updated:** $(Get-Date)`n" | Out-File $outputMd -Append
 
 Write-Host "Current Location: $(Get-Location)"
@@ -25,7 +25,7 @@ Write-Host "Directory Path: $folderPath"
 foreach ($file in $nonJsonFiles) {
 
     # Construct the expected JSON file name
-    $jsonFileName = "$($file).supplemental-metadata.json"
+    $jsonFileName = "$($file.Name).supplemental-metadata.json"
     
     # Check if the JSON file exists in the same folder
     $jsonFilePath = Join-Path -Path $folderPath -ChildPath $jsonFileName

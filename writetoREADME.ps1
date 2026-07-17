@@ -93,9 +93,43 @@ function ListContents {
     }
 }
 
+
+function Rename-FileSafely {
+    param (
+        [Parameter(Mandatory)]
+        [System.IO.FileInfo]$File,
+        [Parameter(Mandatory)]
+        [string]$NewName,
+        [switch]$WhatIfMode
+    )
+
+    $targetPath = Join-Path $File.DirectoryName $NewName
+    $finalName = $NewName
+
+    if ((Test-Path $targetPath) -and ($File.FullName -ne $targetPath)) {
+        $base = [System.IO.Path]::GetFileNameWithoutExtension($NewName)
+        $ext  = [System.IO.Path]::GetExtension($NewName)
+        $counter = 1
+        do {
+            $finalName = "${base}_$counter$ext"
+            $targetPath = Join-Path $File.DirectoryName $finalName
+            $counter++
+        } while (Test-Path $targetPath)
+    }
+
+    if ($File.Name -eq $finalName) {
+        return  # nothing to do
+    }
+
+    Rename-Item -LiteralPath $File.FullName -NewName $finalName -WhatIf:$WhatIfMode
+    Write-Host "$($File.Name)  ->  $finalName"
+}
+
+
+
 #------------main()-------------------
 
-$directoryPath = "C:\Users\Audrey\OneDrive\Desktop\Audrey_photos_bkup\.1 MEIMEI HELP TAKEOUT" 
+$directoryPath = "C:\Users\Audrey\OneDrive\Desktop\extractNdelete" 
 
 ListContents $directoryPath | Sort-Object DateCreated | Format-Table -AutoSize
 
@@ -118,10 +152,11 @@ Write-Host $directoryPath
 "|------|--------------|----------:|-------------|--------------|--------------|" | Out-File $outputMd -Append
 
 Get-ChildItem -Path $directoryPath | Sort-Object -Property Name | ForEach-Object {
-    "| $($_.Name) | $(RenameFileToTimestamp $_.FullName) | $([math]::Round($_.Length / 1MB, 2)) MB | $($_.CreationTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastWriteTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastAccessTime.ToString("yyyy/MM/dd hh:mm tt")) |" |
+    $newName = RenameFileToTimestamp $_.FullName
+    "| $($_.Name) | $($newName) | $([math]::Round($_.Length / 1MB, 2)) MB | $($_.CreationTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastWriteTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastAccessTime.ToString("yyyy/MM/dd hh:mm tt")) |" |
         Out-File $outputMd -Append
 
-    # Write-Host $($_.Name)
+    Rename-FileSafely -File $_ -NewName $newName -WhatIfMode
 }
 
 # test code for function RenameFileToTimestamp

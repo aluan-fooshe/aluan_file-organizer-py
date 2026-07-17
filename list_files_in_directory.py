@@ -26,6 +26,11 @@ class DirectoryScanner(): # Don't inherit from dir_path
         return f"{size_bytes:.2f} PB"
 
 def DirectoryInfo(dir_path):
+    """
+    This function checks if the json file is paired with the file itself and the file size of the file.
+    :param dir_path:
+    :return:
+    """
     results = DirectoryScanner(dir_path)
 
     for item in Path(dir_path).rglob("*"):
@@ -51,7 +56,7 @@ def GetChildItem_Recurse_py(dir_path):
         for name in files:
             print(os.path.join(root, name))
 
-dir_path = r"C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250808T041526Z-1-001\Photos from 2025"
+dir_path = r"C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250725T035235Z-1-001\Unsorted_2017-2025\2025_Screenshots"
 # dir_path = input("Type directory path to list all file contents in: \n").strip()
 
 results = DirectoryInfo(dir_path)

@@ -44,7 +44,7 @@ if __name__ == "__main__":
     dt = datetime.datetime.today()
     date = dt.strftime("%Y %B %d @%I:%M%p")
 
-    dir_path = r"C:\Users\Audrey\OneDrive\Desktop\Audrey_photos_bkup\2023-10\VID_20231031_ Halloween in Santa Cruz"
+    dir_path = r"C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250725T035235Z-1-001\Unsorted_2017-2025\2024_Screenshots"
 
     # logic for automatically naming the screenshots file list to directory name.
     last_part = os.path.basename(dir_path)
