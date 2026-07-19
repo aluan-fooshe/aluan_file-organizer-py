@@ -129,35 +129,28 @@ function Rename-FileSafely {
 
 #------------main()-------------------
 
-$directoryPath = "C:\Users\Audrey\OneDrive\Desktop\extractNdelete" 
+function Main {
+    param (
+        [switch]$WhatIfMode
+    )
 
-ListContents $directoryPath | Sort-Object DateCreated | Format-Table -AutoSize
+    $directoryPath = "C:\Users\Audrey\OneDrive\Desktop\extractNdelete"
+    ListContents $directoryPath | Sort-Object DateCreated | Format-Table -AutoSize
 
+    $outputMd = "$directoryPath\README.md"
+    "# README" | Out-File $outputMd
+    "## Files in $directoryPath`n" | Out-File $outputMd -Append
+    "**Last Updated:** $(Get-Date)`n" | Out-File $outputMd -Append
+    Write-Host (Get-Location)
+    Write-Host $directoryPath
+    "| File | StandardName | Size (MB) | DateCreated | DateModified | DateAccessed | " | Out-File $outputMd -Append
+    "|------|--------------|----------:|-------------|--------------|--------------|" | Out-File $outputMd -Append
 
+    Get-ChildItem -Path $directoryPath -File | Sort-Object -Property Name | ForEach-Object {
+        $newName = RenameFileToTimestamp $_.FullName
+        "| $($_.Name) | $($newName) | $([math]::Round($_.Length / 1MB, 2)) MB | $($_.CreationTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastWriteTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastAccessTime.ToString("yyyy/MM/dd hh:mm tt")) |" |
+            Out-File $outputMd -Append
 
-# test code for formatting the table to a README.md file
-
-# declare output file path
-$outputMd = "$directoryPath\README.md"
-
-# Write title and directory path to README
-"# README" | Out-File $outputMd # erases everything in README without command "-Append"
-"## Files in $directoryPath`n" | Out-File $outputMd -Append
-"**Last Updated:** $(Get-Date)`n" | Out-File $outputMd -Append
-
-Write-Host (Get-Location)
-Write-Host $directoryPath
-
-"| File | StandardName | Size (MB) | DateCreated | DateModified | DateAccessed | " | Out-File $outputMd -Append
-"|------|--------------|----------:|-------------|--------------|--------------|" | Out-File $outputMd -Append
-
-Get-ChildItem -Path $directoryPath | Sort-Object -Property Name | ForEach-Object {
-    $newName = RenameFileToTimestamp $_.FullName
-    "| $($_.Name) | $($newName) | $([math]::Round($_.Length / 1MB, 2)) MB | $($_.CreationTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastWriteTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastAccessTime.ToString("yyyy/MM/dd hh:mm tt")) |" |
-        Out-File $outputMd -Append
-
-    Rename-FileSafely -File $_ -NewName $newName -WhatIfMode
+        Rename-FileSafely -File $_ -NewName $newName -WhatIfMode:$WhatIfMode
+    }
 }
-
-# test code for function RenameFileToTimestamp
-# Write-Host (RenameFileToTimestamp "D:\Audrey's Stuff\iPhone17Pro_bkup\VID_20251225_Christmas\IMG_0052.MOV")

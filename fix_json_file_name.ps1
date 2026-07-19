@@ -1,5 +1,5 @@
 ﻿# Set the folder path (current folder in this example)
-# $folderPath = "C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250808T041526Z-1-001\Photos from 2022"
+# $folderPath = "C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250725T035235Z-1-001\Deep cleaning and room makeover\VID_20200407_110729254.mp4"
 
 $jsonNameEnding = "supplemental-metadata.json"
 $brokenfilename = @()
