@@ -12,27 +12,27 @@ foreach ($char in $jsonNameEnding.ToCharArray()) {
 
 $brokenfilename
 
-for ($year = 2021; $year -le 2025; $year++){
-    $folderPath = "C:\Users\Audrey\OneDrive\Desktop\Audrey_photos_bkup\Takeout\Photos from $year"
+# for ($year = 2021; $year -le 2025; $year++){
+$folderPath = "C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250725T035235Z-1-001"
 
-        foreach ($name in $brokenfilename){
-        # Write-Host "[$name]"
+foreach ($name in $brokenfilename){
+# Write-Host "[$name]"
 
-        Get-ChildItem $folderPath -Recurse -File |
-        Where-Object { $_.Name -like "*.$name.json*" } |
-        ForEach-Object { 
-            # Write-Host "$($_.Name)"
+Get-ChildItem $folderPath -Recurse -File |
+Where-Object { $_.Name -like "*.$name.json*" } |
+ForEach-Object { 
+    # Write-Host "$($_.Name)"
 
-            if (-not $_.Name.EndsWith("supplemental-metadata.json")){
-                $newName = $_.Name -replace "\.$name\.json", ".supplemental-metadata.json"
-                Write-Host "$($_.Name) will be renamed as $newName"
-                Rename-Item $_.FullName -NewName $newName
-            }
-            else{
-                # "$($_.Name) remains the same."
-            }
-
+        if (-not $_.Name.EndsWith("supplemental-metadata.json")){
+            $newName = $_.Name -replace "\.$name\.json", ".supplemental-metadata.json"
+            Write-Host "$($_.Name) will be renamed as $newName"
+            Rename-Item $_.FullName -NewName $newName
         }
+        else{
+            # "$($_.Name) remains the same."
+        }
+
     }
 }
+# }
 

@@ -3,7 +3,7 @@
 function SortByMonthAndYear_subDir {
     param(
         [string]$MAINfolderpath,
-        [string]$DirNamePattern,
+        # [string]$DirNamePattern,
         [int]$StartYear,
         [int]$EndYear,
         [switch]$DryRun
