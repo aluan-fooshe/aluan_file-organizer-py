@@ -1,38 +1,40 @@
-﻿# Set the folder path (current folder in this example)
-# $folderPath = "C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250725T035235Z-1-001\Deep cleaning and room makeover\VID_20200407_110729254.mp4"
+﻿function Repair-JsonFileName {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [ValidateNotNullOrEmpty()]
+        [string]$FolderPath
+    )
 
-$jsonNameEnding = "supplemental-metadata.json"
-$brokenfilename = @()
-$pos_names = ""
+    if (-not (Test-Path -Path $FolderPath)) {
+        throw "Path not found: $FolderPath"
+    }
 
-foreach ($char in $jsonNameEnding.ToCharArray()) {
-    $pos_names += $char
-    $brokenfilename += $pos_names
-}
+    $jsonNameEnding = "supplemental-metadata.json"
+    $brokenfilename = @()
+    $pos_names = ""
 
-$brokenfilename
+    foreach ($char in $jsonNameEnding.ToCharArray()) {
+        $pos_names += $char
+        $brokenfilename += $pos_names
+    }
 
-# for ($year = 2021; $year -le 2025; $year++){
-$folderPath = "C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250725T035235Z-1-001"
-
-foreach ($name in $brokenfilename){
-# Write-Host "[$name]"
-
-Get-ChildItem $folderPath -Recurse -File |
-Where-Object { $_.Name -like "*.$name.json*" } |
-ForEach-Object { 
-    # Write-Host "$($_.Name)"
-
-        if (-not $_.Name.EndsWith("supplemental-metadata.json")){
-            $newName = $_.Name -replace "\.$name\.json", ".supplemental-metadata.json"
-            Write-Host "$($_.Name) will be renamed as $newName"
-            Rename-Item $_.FullName -NewName $newName
-        }
-        else{
-            # "$($_.Name) remains the same."
-        }
-
+    foreach ($name in $brokenfilename) {
+        Get-ChildItem -Path $FolderPath -Recurse -File |
+            Where-Object { $_.Name -like "*.$name.json*" } |
+            ForEach-Object {
+                if (-not $_.Name.EndsWith("supplemental-metadata.json")) {
+                    $newName = $_.Name -replace "\.$name\.json", ".supplemental-metadata.json"
+                    Write-Host "$($_.Name) will be renamed as $newName"
+                    Rename-Item -Path $_.FullName -NewName $newName
+                }
+            }
     }
 }
-# }
+
+# Example: pass any folder (or file) path as an argument when running the script
+# .\fix_json_file_name.ps1 "C:\Users\Audrey\OneDrive\Pictures\Camera Roll\takeout-20250725T035235Z-1-001"
+if ($args.Count -gt 0) {
+    Repair-JsonFileName -FolderPath $args[0]
+}
 
