@@ -46,17 +46,14 @@ function RenameFileToTimestamp {
     }
     else{
         $extension = $FilePath.Name.Substring($index)
-        $origNum = $FilePath.Name.Substring(4, $index-4)
+        # $origNum = $FilePath.Name.Substring(4, $index-4)
     }
 
     # Generate the appropriate standard name based on these conditions; 
     # iPhone17 pro or not
     # OTHER file
     # index is equal to -1
-    if ($extension -eq ".md"){
-        $StandardName = $FilePath.Name.Substring(0, $index) + "_" + "$YYYY$Month$DD" + $extension
-    }
-    elseif ($label -eq "OTHER") {
+    if ($label -eq "OTHER") {
         $StandardName = "---"
     }
     else{
@@ -71,7 +68,7 @@ function RenameFileToTimestamp {
 function ListContents {
     param (
         [Parameter(Mandatory)]
-        [System.IO.FileInfo]$FilePath
+        [System.IO.FileInfo]$DirectoryPath
     )
 
     Get-ChildItem $DirectoryPath -File | ForEach-Object {
@@ -127,15 +124,13 @@ function Rename-FileSafely {
 }
 
 
-
-#------------main()-------------------
-
-function Main {
+function Rename-Files-and-add-README {
     param (
-        [switch]$WhatIfMode
+        [switch]$WhatIfMode,
+        [Parameter(Mandatory)]
+        [System.IO.DirectoryInfo]$DirectoryPath
     )
 
-    $directoryPath = "D:\Audrey's Stuff\iPhone17Pro_bkup\2026-07 SF trip"
     ListContents $directoryPath | Sort-Object DateCreated | Format-Table -AutoSize
 
     $outputMd = "$directoryPath\README.md"
@@ -157,3 +152,13 @@ function Main {
         }
     }
 }
+
+
+#------------HOW TO RUN in windows powershell terminal-------------------
+
+#.\script.ps1          # RUNS the script — functions are defined, then discarded when it finishes
+#. .\script.ps1        # DOT-SOURCES the script — functions stay loaded in your current session
+
+#.\script.ps1
+# Get-Command {chosen-function}
+# {chosen-function} {parameters} -WhatIfMode
