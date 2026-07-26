@@ -159,6 +159,6 @@ function Rename-Files-and-add-README {
 #.\script.ps1          # RUNS the script — functions are defined, then discarded when it finishes
 #. .\script.ps1        # DOT-SOURCES the script — functions stay loaded in your current session
 
-#.\script.ps1
+#.\aluan_Github_folder\pycharm-files-PUBLIC\aluan_file-organizer-py\Rename-FilesToTimestamp.ps1
 # Get-Command {chosen-function}
 # {chosen-function} {parameters} -WhatIfMode
