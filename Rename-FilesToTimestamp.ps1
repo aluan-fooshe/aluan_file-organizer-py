@@ -68,14 +68,14 @@ function RenameFileToTimestamp {
 function ListContents {
     param (
         [Parameter(Mandatory)]
-        [System.IO.FileInfo]$DirectoryPath
+        [System.IO.DirectoryInfo]$DirectoryPath
     )
 
-    Get-ChildItem $DirectoryPath -File | ForEach-Object {
+    Get-ChildItem -Path $DirectoryPath -File | ForEach-Object {
 
     # Get the file size of each object in MB.
     $size = [math]::Round($_.Length / 1MB, 2)
-    $StandardName = (RenameFileToTimestamp $DirectoryPath/$_)
+    $StandardName = (RenameFileToTimestamp $_)
 
     # Write-Host "it is $StandardName"
     
@@ -142,14 +142,22 @@ function Rename-Files-and-add-README {
     "| File | StandardName | Size (MB) | DateCreated | DateModified | DateAccessed | " | Out-File $outputMd -Append
     "|------|--------------|----------:|-------------|--------------|--------------|" | Out-File $outputMd -Append
 
-    Get-ChildItem -Path $directoryPath -File | Sort-Object -Property Name | ForEach-Object {
-        $newName = RenameFileToTimestamp $_.FullName
-        "| $($_.Name) | $($newName) | $([math]::Round($_.Length / 1MB, 2)) MB | $($_.CreationTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastWriteTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastAccessTime.ToString("yyyy/MM/dd hh:mm tt")) |" |
-            Out-File $outputMd -Append
+    try{
+        Get-ChildItem -Path $directoryPath -File -ErrorAction Stop | Sort-Object -Property Name | ForEach-Object {
+            $newName = RenameFileToTimestamp $_.FullName
+            "| $($_.Name) | $($newName) | $([math]::Round($_.Length / 1MB, 2)) MB | $($_.CreationTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastWriteTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastAccessTime.ToString("yyyy/MM/dd hh:mm tt")) |" |
+                Out-File $outputMd -Append
 
-        if ($newName -ne "---") {
-            Rename-FileSafely -File $_ -NewName $newName -WhatIfMode:$WhatIfMode
+            if ($newName -ne "---") {
+                Rename-FileSafely -File $_ -NewName $newName -WhatIfMode:$WhatIfMode
+            }
         }
+    }
+    catch [System.UnauthorizedAccessException] {
+       Write-Warning "Permission denied accessing $DirectoryPath"
+    }
+    catch [System.Management.Automation.ItemNotFoundException] {
+        Write-Warning "Path not found: $DirectoryPath"
     }
 }
 
