@@ -24,6 +24,7 @@ function RenameFileToTimestamp {
             ".mp4"  { $label = "VID" }
             ".mp3"  { $label = "VID" }
             ".mov"  { $label = "MOV" }
+            ".heic"  { $label = "IMG" }
             default { $label = "OTHER" }
         }
     }
@@ -111,7 +112,7 @@ function Rename-FileSafely {
         $ext  = [System.IO.Path]::GetExtension($NewName)
         $counter = 1
         do {
-            $finalName = "${base}_$counter$ext"
+            $finalName = "${base}_$($counter.ToString('000'))$ext"
             $targetPath = Join-Path $File.DirectoryName $finalName
             $counter++
         } while (Test-Path $targetPath)
@@ -134,7 +135,7 @@ function Main {
         [switch]$WhatIfMode
     )
 
-    $directoryPath = "C:\Users\Audrey\OneDrive\Desktop\extractNdelete"
+    $directoryPath = "D:\Audrey's Stuff\iPhone17Pro_bkup\2026-07 SF trip"
     ListContents $directoryPath | Sort-Object DateCreated | Format-Table -AutoSize
 
     $outputMd = "$directoryPath\README.md"
@@ -151,6 +152,8 @@ function Main {
         "| $($_.Name) | $($newName) | $([math]::Round($_.Length / 1MB, 2)) MB | $($_.CreationTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastWriteTime.ToString("yyyy/MM/dd hh:mm tt")) | $($_.LastAccessTime.ToString("yyyy/MM/dd hh:mm tt")) |" |
             Out-File $outputMd -Append
 
-        Rename-FileSafely -File $_ -NewName $newName -WhatIfMode:$WhatIfMode
+        if ($newName -ne "---") {
+            Rename-FileSafely -File $_ -NewName $newName -WhatIfMode:$WhatIfMode
+        }
     }
 }
